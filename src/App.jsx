@@ -17,25 +17,19 @@ function App() {
     formData.append('file', file);
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    const handleFileUpload = async (file) => {
-      setLoading(true);
-      setError(null);
 
-      const formData = new FormData();
-      formData.append('file', file);
+    try {
+      const response = await axios.post(`${API_URL}/api/reports/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setReporte(response.data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error al procesar el archivo');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      try {
-        const response = await axios.post(`${API_URL}/api/reports/upload`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        setReporte(response.data);
-      } catch (err) {
-        setError(err.response?.data?.error || 'Error al procesar el archivo');
-      } finally {
-        setLoading(false);
-      }
-    };
- }
   return (
     <div className="min-h-screen bg-slate-50 p-8 max-w-5xl mx-auto font-sans text-gray-800">
       <header className="mb-8 text-center">
